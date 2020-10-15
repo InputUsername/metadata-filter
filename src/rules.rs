@@ -221,4 +221,21 @@ mod tests {
 
         test_rules(&titles, &REMASTERED_FILTER_RULES);
     }
+
+    #[test]
+    fn test_version_filter_rules() {
+        let titles = [
+            ("Love Will Come To You (Album Version)", "Love Will Come To You "),
+            ("I Melt With You (Rerecorded)", "I Melt With You "),
+            ("When I Need You [Re-Recorded]", "When I Need You "),
+            ("Your Cheatin' Heart (Single Version)", "Your Cheatin' Heart "),
+            ("All Over Now (Edit)", "All Over Now "),
+            ("(I Can't Get No) Satisfaction - Mono Version", "(I Can't Get No) Satisfaction "),
+            ("Ruby Tuesday - Stereo Version", "Ruby Tuesday "),
+            ("Pure McCartney (Deluxe Edition)", "Pure McCartney "),
+            ("6 Foot 7 Foot (Explicit Version)", "6 Foot 7 Foot "),
+        ];
+
+        test_rules(&titles, &VERSION_FILTER_RULES);
+    }
 }
