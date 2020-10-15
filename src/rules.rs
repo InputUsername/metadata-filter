@@ -154,14 +154,14 @@ filter_rules!(NORMALIZE_FEATURE_FILTER_RULES, [
 
 filter_rules!(VERSION_FILTER_RULES, [
     // Love Will Come To You (Album Version)
-    (r"[([]Album Version[)\]]$", ""),
+    (r"[(\[]Album Version[)\]]$", ""),
     // I Melt With You (Rerecorded)
     // When I Need You [Re-Recorded]
-    (r"[([]Re-?recorded[)\]]$", ""),
+    (r"[(\[]Re-?recorded[)\]]$", ""),
     // Your Cheatin' Heart (Single Version)
-    (r"[([]Single Version[)\]]$", ""),
+    (r"[(\[]Single Version[)\]]$", ""),
     // All Over Now (Edit)
-    (r"[([]Edit[)\]]$", ""),
+    (r"[(\[]Edit[)\]]$", ""),
     // (I Can't Get No) Satisfaction - Mono Version
     (r"-\sMono Version$", ""),
     // Ruby Tuesday - Stereo Version
@@ -169,13 +169,13 @@ filter_rules!(VERSION_FILTER_RULES, [
     // Pure McCartney (Deluxe Edition)
     (r"\(Deluxe Edition\)$", ""),
     // 6 Foot 7 Foot (Explicit Version)
-    (r"(?i)[([]Explicit Version[)\]]/", ""),
+    (r"(?i)[(\[]Explicit Version[)\]]", ""),
 ]);
 
 filter_rules!(SUFFIX_FILTER_RULES, [
     // "- X Remix" -> "(X Remix)" and similar
     (r"(?i)-\s(.+?)\s((Re)?mix|edit|dub|mix|vip|version)$", "($1 $2)"),
-    (r"-\s(Remix|VIP)$", "($1)"),
+    (r"(?i)-\s(Remix|VIP)$", "($1)"),
 ]);
 
 #[cfg(test)]
