@@ -53,11 +53,11 @@ filter_rules!(YOUTUBE_TRACK_FILTER_RULES, [
     // HD (HQ)
     (r"(HD|HQ)\s*$", ""),
     // video clip officiel or video clip official
-    (r"(?i)(vid[\u00E9e]o)?\s?clip\sof+ici[ae]l", ""),
+    ("(?i)(vid[\u{00E9}e]o)?\\s?clip\\sof+ici[ae]l", ""),
     // offizielles
     (r"(?i)of+iziel+es\s*video", ""),
     // video clip
-    (r"(?i)vid[\u00E9e]o\s?clip", ""),
+    ("(?i)vid[\u{00E9}e]o\\s?clip", ""),
     // clip
     (r"(?i)\sclip", ""),
     // Full Album
@@ -67,9 +67,9 @@ filter_rules!(YOUTUBE_TRACK_FILTER_RULES, [
     // | something
     (r"(?i)\|.*$", ""),
     // Artist - The new "Track title" featuring someone
-    (r#"^(|.*\s)"(.{5,})"(\s.*|)$, "#, "$2"),
+    (r#"^(|.*\s)"(.{5,})"(\s.*|)$"#, "$2"),
     // 'Track title'
-    (r"^(|.*\s)'(.{5,})'(\s.*|)$, ", "$2"),
+    (r"^(|.*\s)'(.{5,})'(\s.*|)$", "$2"),
     // (*01/01/1999*)
     (r"(?i)\(.*[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4}.*\)", ""),
     // Sub Español
