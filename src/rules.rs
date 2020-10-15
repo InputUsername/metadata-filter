@@ -144,12 +144,12 @@ filter_rules!(CLEAN_EXPLICIT_FILTER_RULES, [
 
 filter_rules!(FEATURE_FILTER_RULES, [
     // [Feat. Artist] or (Feat. Artist)
-    (r"(?i)\s[([]feat. .+[)\]]", "$1"),
+    (r"(?i)\s[(\[]feat. .+[)\]]", ""),
 ]);
 
 filter_rules!(NORMALIZE_FEATURE_FILTER_RULES, [
     // [Feat. Artist] or (Feat. Artist) -> Feat. Artist
-    (r"\s[([](feat. .+)[)\]]", "$1"),
+    (r"(?i)\s[(\[](feat. .+)[)\]]", "$1"),
 ]);
 
 filter_rules!(VERSION_FILTER_RULES, [
