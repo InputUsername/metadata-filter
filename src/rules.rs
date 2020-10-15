@@ -182,9 +182,20 @@ filter_rules!(SUFFIX_FILTER_RULES, [
 mod tests {
     use super::*;
 
+    fn test_rules(values: &[(&str, &str)], rules: &[FilterRule]) {
+        for value in values {
+            for rule in rules {
+                let filtered = rule.apply(value.0);
+                if filtered != value.0 {
+                    assert_eq!(filtered, value.1);
+                }
+            }
+        }
+    }
+
     #[test]
     fn test_remastered_filter_rules() {
-        let titles = vec![
+        let titles = [
             ("Here Comes The Sun - Remastered", "Here Comes The Sun "),
             ("Hey Jude - Remastered 2015", "Hey Jude "),
             ("Let It Be (Remastered 2009)", "Let It Be "),
@@ -208,13 +219,6 @@ mod tests {
                 "In The Court Of The Crimson King "),
         ];
 
-        for title in titles {
-            for rule in REMASTERED_FILTER_RULES.iter() {
-                let filtered = rule.apply(title.0);
-                if filtered != title.0 {
-                    assert_eq!(filtered, title.1);
-                }
-            }
-        }
+        test_rules(&titles, &REMASTERED_FILTER_RULES);
     }
 }
