@@ -137,9 +137,9 @@ filter_rules!(LIVE_FILTER_RULES, [
 
 filter_rules!(CLEAN_EXPLICIT_FILTER_RULES, [
     // (Explicit) or [Explicit]
-    (r"(?i)\s[([]Explicit[)\]]", ""),
+    (r"(?i)\s[(\[]Explicit[)\]]", ""),
     // (Clean) or [Clean]
-    (r"(?i)\s[([]Clean[)\]]", ""),
+    (r"(?i)\s[(\[]Clean[)\]]", ""),
 ]);
 
 filter_rules!(FEATURE_FILTER_RULES, [
