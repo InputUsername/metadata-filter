@@ -124,6 +124,8 @@ filter_rules!(REMASTERED_FILTER_RULES, [
     // She Was Hot (2009 Re-Mastered Digital Version)
     // She Was Hot (2009 Remastered Digital Version)
     (r"[(\[]\d{4} Re-?[Mm]astered Digital Version[)\]]$", ""),
+    // In The Court Of The Crimson King (Expanded & Remastered Original Album Mix)
+    (r"\([^(]*Remaster[^)]*\)$", ""),
 ]);
 
 filter_rules!(LIVE_FILTER_RULES, [
@@ -202,6 +204,8 @@ mod tests {
             ("A Well Respected Man [2014 Remastered Version]", "A Well Respected Man "),
             ("She Was Hot (2009 Re-Mastered Digital Version)", "She Was Hot "),
             ("She Was Hot (2009 Remastered Digital Version)", "She Was Hot "),
+            ("In The Court Of The Crimson King (Expanded & Remastered Original Album Mix)",
+                "In The Court Of The Crimson King "),
         ];
 
         for title in titles {
