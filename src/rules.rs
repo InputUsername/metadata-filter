@@ -3,10 +3,10 @@ use std::borrow::Cow;
 use once_cell::sync::Lazy;
 use regex::Regex;
 
-pub(crate) struct FilterRule<'r>(Regex, &'r str);
+pub(crate) struct FilterRule(Regex, &'static str);
 
-impl<'r> FilterRule<'r> {
-    fn apply<'t>(&self, text: &'t str) -> Cow<'t, str> {
+impl FilterRule {
+    pub(crate) fn apply<'t>(&self, text: &'t str) -> Cow<'t, str> {
         self.0.replace(text, self.1)
     }
 }
