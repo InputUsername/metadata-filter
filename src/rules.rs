@@ -24,7 +24,8 @@ macro_rules! filter_rules {
 
 filter_rules!(YOUTUBE_TRACK_FILTER_RULES, [
     // Trim whitespaces
-    (r"^\s+|\s+$", ""), // TODO: g
+    (r"^\s+", ""),
+    (r"\s+$", ""),
     // **NEW**
     (r"\*+\s?\S+\s?\*+$", ""),
     // [whatever]
