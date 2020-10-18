@@ -157,7 +157,7 @@ filter_rules!(VERSION_FILTER_RULES, [
     (r"[(\[]Album Version[)\]]$", ""),
     // I Melt With You (Rerecorded)
     // When I Need You [Re-Recorded]
-    (r"[(\[]Re-?recorded[)\]]$", ""),
+    (r"[(\[]Re-?[Rr]ecorded[)\]]$", ""),
     // Your Cheatin' Heart (Single Version)
     (r"[(\[]Single Version[)\]]$", ""),
     // All Over Now (Edit)
