@@ -11,14 +11,29 @@ impl FilterRule {
     }
 }
 
+pub struct FilterRules(pub(crate) Lazy<Vec<FilterRule>>);
+
+impl FilterRules {
+    pub(crate) fn apply(&self, text: String) -> String {
+        self.0.iter().fold(text, |mut result, rule| {
+            let filtered = rule.apply(&result);
+            if let Cow::Owned(filtered) = filtered {
+                result.clear();
+                result.push_str(&filtered);
+            }
+            result
+        })
+    }
+}
+
 macro_rules! filter_rules {
     ($name:ident, $rules:expr) => {
-        pub(crate) static $name: Lazy<Vec<FilterRule>> = Lazy::new(|| {
+        pub static $name: FilterRules = FilterRules(Lazy::new(|| {
             $rules
-            .iter()
-            .map(|rule| FilterRule(Regex::new(rule.0).unwrap(), rule.1))
-            .collect()
-        });
+                .iter()
+                .map(|rule| FilterRule(Regex::new(rule.0).unwrap(), rule.1))
+                .collect()
+        }));
     };
 }
 
@@ -182,14 +197,10 @@ filter_rules!(SUFFIX_FILTER_RULES, [
 mod tests {
     use super::*;
 
-    fn test_rules(values: &[(&str, &str)], rules: &[FilterRule]) {
+    fn test_rules(values: &[(&str, &str)], rules: &FilterRules) {
         for value in values {
-            for rule in rules {
-                let filtered = rule.apply(value.0);
-                if filtered != value.0 {
-                    assert_eq!(filtered, value.1);
-                }
-            }
+            let filtered = rules.apply(value.0.to_string());
+            assert_eq!(filtered, value.1);
         }
     }
 
