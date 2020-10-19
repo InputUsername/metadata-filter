@@ -1,3 +1,9 @@
+//! Defines regex replacement rules to filter text with.
+//!
+//! This module defines the [`FilterRules`](struct.FilterRules.html) struct,
+//! which is an opaque representation of a list of regex replacement rules.
+//! It also defines several global (`static`) `FilterRules` instances.
+
 use std::borrow::Cow;
 
 use once_cell::sync::Lazy;
@@ -11,6 +17,10 @@ impl FilterRule {
     }
 }
 
+/// Represents a list of regex replacement rules to filter text with.
+///
+/// This is an opaque representation of a list of filter rules, and is mostly used
+/// to combine the pre-defined filter rules into filters.
 pub struct FilterRules(pub(crate) Lazy<Vec<FilterRule>>);
 
 impl FilterRules {
@@ -27,7 +37,8 @@ impl FilterRules {
 }
 
 macro_rules! filter_rules {
-    ($name:ident, $rules:expr) => {
+    ($(#[$meta:meta])* $name:ident, $rules:expr) => {
+        $(#[$meta])*
         pub static $name: FilterRules = FilterRules(Lazy::new(|| {
             $rules
                 .iter()
@@ -37,161 +48,199 @@ macro_rules! filter_rules {
     };
 }
 
-filter_rules!(YOUTUBE_TRACK_FILTER_RULES, [
-    // Trim whitespaces
-    (r"^\s+", ""),
-    (r"\s+$", ""),
-    // **NEW**
-    (r"\*+\s?\S+\s?\*+$", ""),
-    // [whatever]
-    (r"\[[^\]]+\]", ""),
-    // (whatever version)
-    (r"(?i)\([^)]*version\)$", ""),
-    // video extensions
-    (r"(?i)\.(avi|wmv|mpg|mpeg|flv)$", ""),
-    // (LYRICs VIDEO)
-    (r"(?i)\(.*lyrics?\s*(video)?\)", ""),
-    // (Official Track Stream)
-    (r"(?i)\((of+icial\s*)?(track\s*)?stream\)", ""),
-    // (official)? (music)? video
-    (r"(?i)\((of+icial\s*)?(music\s*)?video\)", ""),
-    // (official)? (music)? audio
-    (r"(?i)\((of+icial\s*)?(music\s*)?audio\)", ""),
-    // (ALBUM TRACK)
-    (r"(?i)(ALBUM TRACK\s*)?(album track\s*)", ""),
-    // (Cover Art)
-    (r"(?i)(COVER ART\s*)?(Cover Art\s*)", ""),
-    // (official)
-    (r"(?i)\(\s*of+icial\s*\)", ""),
-    // (1999)
-    (r"(?i)\(\s*[0-9]{4}\s*\)", ""),
-    // HD (HQ)
-    (r"(HD|HQ)\s*$", ""),
-    // video clip officiel or video clip official
-    ("(?i)(vid[\u{00E9}e]o)?\\s?clip\\sof+ici[ae]l", ""),
-    // offizielles
-    (r"(?i)of+iziel+es\s*video", ""),
-    // video clip
-    ("(?i)vid[\u{00E9}e]o\\s?clip", ""),
-    // clip
-    (r"(?i)\sclip", ""),
-    // Full Album
-    (r"(?i)full\s*album", ""),
-    // (live)
-    (r"(?i)\(live.*?\)$", ""),
-    // | something
-    (r"(?i)\|.*$", ""),
-    // Artist - The new "Track title" featuring someone
-    (r#"^(|.*\s)"(.{5,})"(\s.*|)$"#, "$2"),
-    // 'Track title'
-    (r"^(|.*\s)'(.{5,})'(\s.*|)$", "$2"),
-    // (*01/01/1999*)
-    (r"(?i)\(.*[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4}.*\)", ""),
-    // Sub Español
-    (r"(?i)sub\s*español", ""),
-    // (Letra/Lyrics)
-    (r"(?i)\s\(Letra\/Lyrics\)", ""),
-    // (Letra)
-    (r"(?i)\s\(Letra\)", ""),
-    // (En vivo)
-    (r"(?i)\s\(En\svivo\)", ""),
-]);
+filter_rules!(
+    /// Filter rules to remove YouTube suffixes and prefixes from a text.
+    YOUTUBE_TRACK_FILTER_RULES,
+    [
+        // Trim whitespaces
+        (r"^\s+", ""),
+        (r"\s+$", ""),
+        // **NEW**
+        (r"\*+\s?\S+\s?\*+$", ""),
+        // [whatever]
+        (r"\[[^\]]+\]", ""),
+        // (whatever version)
+        (r"(?i)\([^)]*version\)$", ""),
+        // video extensions
+        (r"(?i)\.(avi|wmv|mpg|mpeg|flv)$", ""),
+        // (LYRICs VIDEO)
+        (r"(?i)\(.*lyrics?\s*(video)?\)", ""),
+        // (Official Track Stream)
+        (r"(?i)\((of+icial\s*)?(track\s*)?stream\)", ""),
+        // (official)? (music)? video
+        (r"(?i)\((of+icial\s*)?(music\s*)?video\)", ""),
+        // (official)? (music)? audio
+        (r"(?i)\((of+icial\s*)?(music\s*)?audio\)", ""),
+        // (ALBUM TRACK)
+        (r"(?i)(ALBUM TRACK\s*)?(album track\s*)", ""),
+        // (Cover Art)
+        (r"(?i)(COVER ART\s*)?(Cover Art\s*)", ""),
+        // (official)
+        (r"(?i)\(\s*of+icial\s*\)", ""),
+        // (1999)
+        (r"(?i)\(\s*[0-9]{4}\s*\)", ""),
+        // HD (HQ)
+        (r"(HD|HQ)\s*$", ""),
+        // video clip officiel or video clip official
+        ("(?i)(vid[\u{00E9}e]o)?\\s?clip\\sof+ici[ae]l", ""),
+        // offizielles
+        (r"(?i)of+iziel+es\s*video", ""),
+        // video clip
+        ("(?i)vid[\u{00E9}e]o\\s?clip", ""),
+        // clip
+        (r"(?i)\sclip", ""),
+        // Full Album
+        (r"(?i)full\s*album", ""),
+        // (live)
+        (r"(?i)\(live.*?\)$", ""),
+        // | something
+        (r"(?i)\|.*$", ""),
+        // Artist - The new "Track title" featuring someone
+        (r#"^(|.*\s)"(.{5,})"(\s.*|)$"#, "$2"),
+        // 'Track title'
+        (r"^(|.*\s)'(.{5,})'(\s.*|)$", "$2"),
+        // (*01/01/1999*)
+        (r"(?i)\(.*[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4}.*\)", ""),
+        // Sub Español
+        (r"(?i)sub\s*español", ""),
+        // (Letra/Lyrics)
+        (r"(?i)\s\(Letra\/Lyrics\)", ""),
+        // (Letra)
+        (r"(?i)\s\(Letra\)", ""),
+        // (En vivo)
+        (r"(?i)\s\(En\svivo\)", ""),
+    ]
+);
 
-filter_rules!(TRIM_SYMBOLS_FILTER_RULES, [
-    // Leftovers after e.g. (official video)
-    (r"\(+\s*\)+", ""),
-    // trim starting white chars and dash
-    (r#"^[/,:;~-\s"]+"#, ""),
-    // trim trailing white chars and dash
-    (r#"[/,:;~-\s"]+$"#, ""),
-]);
+filter_rules!(
+    /// Special filter rules to remove leftovers after filtering text using
+    /// [`YOUTUBE_TRACK_FILTER_RULES`](static.YOUTUBE_TRACK_FILTER_RULES.html) filter rules.
+    TRIM_SYMBOLS_FILTER_RULES,
+    [
+        // Leftovers after e.g. (official video)
+        (r"\(+\s*\)+", ""),
+        // trim starting white chars and dash
+        (r#"^[/,:;~-\s"]+"#, ""),
+        // trim trailing white chars and dash
+        (r#"[/,:;~-\s"]+$"#, ""),
+    ]
+);
 
-filter_rules!(REMASTERED_FILTER_RULES, [
-    // Here Comes The Sun - Remastered
-    (r"-\sRemastered$", ""),
-    // Hey Jude - Remastered 2015
-    (r"-\sRemastered\s\d+$", ""),
-    // Let It Be (Remastered 2009)
-    // Red Rain (Remaster 2012)
-    (r"\(Remaster(ed)?\s\d+\)$", ""),
-    // Pigs On The Wing (Part One) [2011 - Remaster]
-    (r"\[\d+\s-\sRemaster\]$", ""),
-    // Comfortably Numb (2011 - Remaster)
-    // Dancing Days (2012 Remaster)
-    (r"\(\d+(\s-)?\sRemaster\)$", ""),
-    // Outside The Wall - 2011 - Remaster
-    // China Grove - 2006 Remaster
-    (r"-\s\d+(\s-)?\sRemaster$", ""),
-    // Learning To Fly - 2001 Digital Remaster
-    (r"-\s\d+\s.+?\sRemaster$", ""),
-    // Your Possible Pasts - 2011 Remastered Version
-    (r"-\s\d+\sRemastered Version$", ""),
-    // Roll Over Beethoven (Live / Remastered)
-    (r"\(Live\s/\sRemastered\)$", ""),
-    // Ticket To Ride - Live / Remastered
-    (r"-\sLive\s/\sRemastered$", ""),
-    // Mothership (Remastered)
-    // How The West Was Won [Remastered]
-    (r"[(\[]Remastered[)\]]$", ""),
-    // A Well Respected Man (2014 Remastered Version)
-    // A Well Respected Man [2014 Remastered Version]
-    (r"[(\[]\d{4} Re[Mm]astered Version[)\]]$", ""),
-    // She Was Hot (2009 Re-Mastered Digital Version)
-    // She Was Hot (2009 Remastered Digital Version)
-    (r"[(\[]\d{4} Re-?[Mm]astered Digital Version[)\]]$", ""),
-    // In The Court Of The Crimson King (Expanded & Remastered Original Album Mix)
-    (r"\([^(]*Remaster[^)]*\)$", ""),
-]);
+filter_rules!(
+    /// Filter rules to remove "Remastered..."-like strings from a text.
+    REMASTERED_FILTER_RULES,
+    [
+        // Here Comes The Sun - Remastered
+        (r"-\sRemastered$", ""),
+        // Hey Jude - Remastered 2015
+        (r"-\sRemastered\s\d+$", ""),
+        // Let It Be (Remastered 2009)
+        // Red Rain (Remaster 2012)
+        (r"\(Remaster(ed)?\s\d+\)$", ""),
+        // Pigs On The Wing (Part One) [2011 - Remaster]
+        (r"\[\d+\s-\sRemaster\]$", ""),
+        // Comfortably Numb (2011 - Remaster)
+        // Dancing Days (2012 Remaster)
+        (r"\(\d+(\s-)?\sRemaster\)$", ""),
+        // Outside The Wall - 2011 - Remaster
+        // China Grove - 2006 Remaster
+        (r"-\s\d+(\s-)?\sRemaster$", ""),
+        // Learning To Fly - 2001 Digital Remaster
+        (r"-\s\d+\s.+?\sRemaster$", ""),
+        // Your Possible Pasts - 2011 Remastered Version
+        (r"-\s\d+\sRemastered Version$", ""),
+        // Roll Over Beethoven (Live / Remastered)
+        (r"\(Live\s/\sRemastered\)$", ""),
+        // Ticket To Ride - Live / Remastered
+        (r"-\sLive\s/\sRemastered$", ""),
+        // Mothership (Remastered)
+        // How The West Was Won [Remastered]
+        (r"[(\[]Remastered[)\]]$", ""),
+        // A Well Respected Man (2014 Remastered Version)
+        // A Well Respected Man [2014 Remastered Version]
+        (r"[(\[]\d{4} Re[Mm]astered Version[)\]]$", ""),
+        // She Was Hot (2009 Re-Mastered Digital Version)
+        // She Was Hot (2009 Remastered Digital Version)
+        (r"[(\[]\d{4} Re-?[Mm]astered Digital Version[)\]]$", ""),
+        // In The Court Of The Crimson King (Expanded & Remastered Original Album Mix)
+        (r"\([^(]*Remaster[^)]*\)$", ""),
+    ]
+);
 
-filter_rules!(LIVE_FILTER_RULES, [
-    // Track - Live
-    (r"-\sLive?$", ""),
-    // Track - Live at
-    (r"-\sLive\s.+?$", ""),
-]);
+filter_rules!(
+    /// Filter rules to remove "Live..."-like strings from a text.
+    LIVE_FILTER_RULES,
+    [
+        // Track - Live
+        (r"-\sLive?$", ""),
+        // Track - Live at
+        (r"-\sLive\s.+?$", ""),
+    ]
+);
 
-filter_rules!(CLEAN_EXPLICIT_FILTER_RULES, [
-    // (Explicit) or [Explicit]
-    (r"(?i)\s[(\[]Explicit[)\]]", ""),
-    // (Clean) or [Clean]
-    (r"(?i)\s[(\[]Clean[)\]]", ""),
-]);
+filter_rules!(
+    /// Filter rules to remove "Explicit" and "Clean" from a text.
+    CLEAN_EXPLICIT_FILTER_RULES,
+    [
+        // (Explicit) or [Explicit]
+        (r"(?i)\s[(\[]Explicit[)\]]", ""),
+        // (Clean) or [Clean]
+        (r"(?i)\s[(\[]Clean[)\]]", ""),
+    ]
+);
 
-filter_rules!(FEATURE_FILTER_RULES, [
-    // [Feat. Artist] or (Feat. Artist)
-    (r"(?i)\s[(\[]feat. .+[)\]]", ""),
-]);
+filter_rules!(
+    /// Filter rules to remove feature information from a text.
+    FEATURE_FILTER_RULES,
+    [
+        // [Feat. Artist] or (Feat. Artist)
+        (r"(?i)\s[(\[]feat. .+[)\]]", ""),
+    ]
+);
 
-filter_rules!(NORMALIZE_FEATURE_FILTER_RULES, [
-    // [Feat. Artist] or (Feat. Artist) -> Feat. Artist
-    (r"(?i)\s[(\[](feat. .+)[)\]]", "$1"),
-]);
+filter_rules!(
+    /// Filter rules to normalize feature information to "Feat. Artist".
+    NORMALIZE_FEATURE_FILTER_RULES,
+    [
+        // [Feat. Artist] or (Feat. Artist) -> Feat. Artist
+        (r"(?i)\s[(\[](feat. .+)[)\]]", "$1"),
+    ]
+);
 
-filter_rules!(VERSION_FILTER_RULES, [
-    // Love Will Come To You (Album Version)
-    (r"[(\[]Album Version[)\]]$", ""),
-    // I Melt With You (Rerecorded)
-    // When I Need You [Re-Recorded]
-    (r"[(\[]Re-?[Rr]ecorded[)\]]$", ""),
-    // Your Cheatin' Heart (Single Version)
-    (r"[(\[]Single Version[)\]]$", ""),
-    // All Over Now (Edit)
-    (r"[(\[]Edit[)\]]$", ""),
-    // (I Can't Get No) Satisfaction - Mono Version
-    (r"-\sMono Version$", ""),
-    // Ruby Tuesday - Stereo Version
-    (r"-\sStereo Version$", ""),
-    // Pure McCartney (Deluxe Edition)
-    (r"\(Deluxe Edition\)$", ""),
-    // 6 Foot 7 Foot (Explicit Version)
-    (r"(?i)[(\[]Explicit Version[)\]]", ""),
-]);
+filter_rules!(
+    /// Filter rules to remove version information (eg. "Album Version" or "Deluxe Edition")
+    /// from a text.
+    VERSION_FILTER_RULES,
+    [
+        // Love Will Come To You (Album Version)
+        (r"[(\[]Album Version[)\]]$", ""),
+        // I Melt With You (Rerecorded)
+        // When I Need You [Re-Recorded]
+        (r"[(\[]Re-?[Rr]ecorded[)\]]$", ""),
+        // Your Cheatin' Heart (Single Version)
+        (r"[(\[]Single Version[)\]]$", ""),
+        // All Over Now (Edit)
+        (r"[(\[]Edit[)\]]$", ""),
+        // (I Can't Get No) Satisfaction - Mono Version
+        (r"-\sMono Version$", ""),
+        // Ruby Tuesday - Stereo Version
+        (r"-\sStereo Version$", ""),
+        // Pure McCartney (Deluxe Edition)
+        (r"\(Deluxe Edition\)$", ""),
+        // 6 Foot 7 Foot (Explicit Version)
+        (r"(?i)[(\[]Explicit Version[)\]]", ""),
+    ]
+);
 
-filter_rules!(SUFFIX_FILTER_RULES, [
-    // "- X Remix" -> "(X Remix)" and similar
-    (r"(?i)-\s(.+?)\s((Re)?mix|edit|dub|mix|vip|version)$", "($1 $2)"),
-    (r"(?i)-\s(Remix|VIP)$", "($1)"),
-]);
+filter_rules!(
+    /// Filter rules to normalize "- suffix" to "(suffix)" in a text.
+    SUFFIX_FILTER_RULES,
+    [
+        // "- X Remix" -> "(X Remix)" and similar
+        (r"(?i)-\s(.+?)\s((Re)?mix|edit|dub|mix|vip|version)$", "($1 $2)"),
+        (r"(?i)-\s(Remix|VIP)$", "($1)"),
+    ]
+);
 
 #[cfg(test)]
 mod tests {
