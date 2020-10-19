@@ -237,7 +237,10 @@ filter_rules!(
     SUFFIX_FILTER_RULES,
     [
         // "- X Remix" -> "(X Remix)" and similar
-        (r"(?i)-\s(.+?)\s((Re)?mix|edit|dub|mix|vip|version)$", "($1 $2)"),
+        (
+            r"(?i)-\s(.+?)\s((Re)?mix|edit|dub|mix|vip|version)$",
+            "($1 $2)"
+        ),
         (r"(?i)-\s(Remix|VIP)$", "($1)"),
     ]
 );
@@ -260,23 +263,49 @@ mod tests {
             ("Hey Jude - Remastered 2015", "Hey Jude "),
             ("Let It Be (Remastered 2009)", "Let It Be "),
             ("Red Rain (Remaster 2012)", "Red Rain "),
-            ("Pigs On The Wing (Part One) [2011 - Remaster]", "Pigs On The Wing (Part One) "),
+            (
+                "Pigs On The Wing (Part One) [2011 - Remaster]",
+                "Pigs On The Wing (Part One) ",
+            ),
             ("Comfortably Numb (2011 - Remaster)", "Comfortably Numb "),
             ("Dancing Days (2012 Remaster)", "Dancing Days "),
             ("Outside The Wall - 2011 - Remaster", "Outside The Wall "),
             ("China Grove - 2006 Remaster", "China Grove "),
-            ("Learning To Fly - 2001 Digital Remaster", "Learning To Fly "),
-            ("Your Possible Pasts - 2011 Remastered Version", "Your Possible Pasts "),
-            ("Roll Over Beethoven (Live / Remastered)", "Roll Over Beethoven "),
+            (
+                "Learning To Fly - 2001 Digital Remaster",
+                "Learning To Fly ",
+            ),
+            (
+                "Your Possible Pasts - 2011 Remastered Version",
+                "Your Possible Pasts ",
+            ),
+            (
+                "Roll Over Beethoven (Live / Remastered)",
+                "Roll Over Beethoven ",
+            ),
             ("Ticket To Ride - Live / Remastered", "Ticket To Ride "),
             ("Mothership (Remastered)", "Mothership "),
             ("How The West Was Won [Remastered]", "How The West Was Won "),
-            ("A Well Respected Man (2014 Remastered Version)", "A Well Respected Man "),
-            ("A Well Respected Man [2014 Remastered Version]", "A Well Respected Man "),
-            ("She Was Hot (2009 Re-Mastered Digital Version)", "She Was Hot "),
-            ("She Was Hot (2009 Remastered Digital Version)", "She Was Hot "),
-            ("In The Court Of The Crimson King (Expanded & Remastered Original Album Mix)",
-                "In The Court Of The Crimson King "),
+            (
+                "A Well Respected Man (2014 Remastered Version)",
+                "A Well Respected Man ",
+            ),
+            (
+                "A Well Respected Man [2014 Remastered Version]",
+                "A Well Respected Man ",
+            ),
+            (
+                "She Was Hot (2009 Re-Mastered Digital Version)",
+                "She Was Hot ",
+            ),
+            (
+                "She Was Hot (2009 Remastered Digital Version)",
+                "She Was Hot ",
+            ),
+            (
+                "In The Court Of The Crimson King (Expanded & Remastered Original Album Mix)",
+                "In The Court Of The Crimson King ",
+            ),
         ];
 
         test_rules(&titles, &REMASTERED_FILTER_RULES);
@@ -285,12 +314,21 @@ mod tests {
     #[test]
     fn test_version_filter_rules() {
         let titles = [
-            ("Love Will Come To You (Album Version)", "Love Will Come To You "),
+            (
+                "Love Will Come To You (Album Version)",
+                "Love Will Come To You ",
+            ),
             ("I Melt With You (Rerecorded)", "I Melt With You "),
             ("When I Need You [Re-Recorded]", "When I Need You "),
-            ("Your Cheatin' Heart (Single Version)", "Your Cheatin' Heart "),
+            (
+                "Your Cheatin' Heart (Single Version)",
+                "Your Cheatin' Heart ",
+            ),
             ("All Over Now (Edit)", "All Over Now "),
-            ("(I Can't Get No) Satisfaction - Mono Version", "(I Can't Get No) Satisfaction "),
+            (
+                "(I Can't Get No) Satisfaction - Mono Version",
+                "(I Can't Get No) Satisfaction ",
+            ),
             ("Ruby Tuesday - Stereo Version", "Ruby Tuesday "),
             ("Pure McCartney (Deluxe Edition)", "Pure McCartney "),
             ("6 Foot 7 Foot (Explicit Version)", "6 Foot 7 Foot "),
