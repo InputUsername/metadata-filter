@@ -3,3 +3,4 @@
 //! TypeScript library.
 
 pub mod rules;
+pub mod filters;
