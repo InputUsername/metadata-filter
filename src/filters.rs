@@ -21,6 +21,7 @@ fn apply_once(text: String, rules: &[FilterRule]) -> String {
 ///
 /// ```
 /// use metadata_filter::rules::{remastered_filter_rules, trim_whitespace_filter_rules};
+/// use metadata_filter::filters::apply_rules;
 ///
 /// let mut rules = remastered_filter_rules();
 /// rules.extend(trim_whitespace_filter_rules());
