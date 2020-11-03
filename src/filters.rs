@@ -39,3 +39,18 @@ pub fn apply_rules(text: &str, rules: &[FilterRule]) -> String {
     }
     result
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::rules::*;
+
+    #[test]
+    fn test_multiple_rulesets() {
+        let mut rules = remastered_filter_rules();
+        rules.extend(trim_whitespace_filter_rules());
+        let filtered = apply_rules("Here Comes The Sun (Remastered)", &rules);
+
+        assert_eq!(filtered, "Here Comes The Sun");
+    }
+}
