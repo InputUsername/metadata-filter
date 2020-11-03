@@ -224,6 +224,15 @@ filter_rules!(
     ]
 );
 
+filter_rules!(
+    /// Filter rules to remove leading and trailing whitespace from a text.
+    trim_whitespace_filter_rules,
+    [
+        (r"^\s+", ""),
+        (r"\s+$", ""),
+    ]
+);
+
 #[cfg(test)]
 mod tests {
     use super::*;
