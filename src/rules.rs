@@ -15,17 +15,6 @@ impl FilterRule {
     }
 }
 
-pub(crate) fn apply_rules(text: &str, rules: &[FilterRule]) -> String {
-    rules.iter().fold(text.to_string(), |mut result, rule| {
-        let filtered = rule.apply(&result);
-        if let Cow::Owned(filtered) = filtered {
-            result.clear();
-            result.push_str(&filtered);
-        }
-        result
-    })
-}
-
 macro_rules! filter_rules {
     ($(#[$meta:meta])* $name:ident, $rules:expr) => {
         $(#[$meta])*
@@ -238,6 +227,17 @@ filter_rules!(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn apply_rules(text: &str, rules: &[FilterRule]) -> String {
+        rules.iter().fold(text.to_string(), |mut result, rule| {
+            let filtered = rule.apply(&result);
+            if let Cow::Owned(filtered) = filtered {
+                result.clear();
+                result.push_str(&filtered);
+            }
+            result
+        })
+    }
 
     fn test_rules(values: &[(&str, &str)], rules: &[FilterRule]) {
         for value in values {
