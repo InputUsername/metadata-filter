@@ -1,56 +1,46 @@
 //! Defines regex replacement rules to filter text with.
-//!
-//! This module defines the [`FilterRules`](struct.FilterRules.html) struct,
-//! which is an opaque representation of a list of regex replacement rules.
-//! It also defines several global (`static`) `FilterRules` instances.
 
 use std::borrow::Cow;
 
-use once_cell::sync::Lazy;
 use regex::Regex;
 
-pub(crate) struct FilterRule(Regex, &'static str);
+/// Represents a regex replacement rule with a pattern and replacement text.
+pub struct FilterRule(Regex, &'static str);
 
 impl FilterRule {
-    pub(crate) fn apply<'t>(&self, text: &'t str) -> Cow<'t, str> {
+    /// Apply the filter rule. Returns Cow::Owned if a replacement was done,
+    /// Cow::Borrowed (referencing the original text) if nothing was changed.
+    pub fn apply<'t>(&self, text: &'t str) -> Cow<'t, str> {
         self.0.replace(text, self.1)
     }
 }
 
-/// Represents a list of regex replacement rules to filter text with.
-///
-/// This is an opaque representation of a list of filter rules, and is mostly used
-/// to combine the pre-defined filter rules into filters.
-pub struct FilterRules(pub(crate) Lazy<Vec<FilterRule>>);
-
-impl FilterRules {
-    pub(crate) fn apply(&self, text: String) -> String {
-        self.0.iter().fold(text, |mut result, rule| {
-            let filtered = rule.apply(&result);
-            if let Cow::Owned(filtered) = filtered {
-                result.clear();
-                result.push_str(&filtered);
-            }
-            result
-        })
-    }
+pub(crate) fn apply_rules(text: &str, rules: &[FilterRule]) -> String {
+    rules.iter().fold(text.to_string(), |mut result, rule| {
+        let filtered = rule.apply(&result);
+        if let Cow::Owned(filtered) = filtered {
+            result.clear();
+            result.push_str(&filtered);
+        }
+        result
+    })
 }
 
 macro_rules! filter_rules {
     ($(#[$meta:meta])* $name:ident, $rules:expr) => {
         $(#[$meta])*
-        pub static $name: FilterRules = FilterRules(Lazy::new(|| {
+        pub fn $name() -> Vec<FilterRule> {
             $rules
                 .iter()
                 .map(|rule| FilterRule(Regex::new(rule.0).unwrap(), rule.1))
                 .collect()
-        }));
+        }
     };
 }
 
 filter_rules!(
     /// Filter rules to remove YouTube suffixes and prefixes from a text.
-    YOUTUBE_TRACK_FILTER_RULES,
+    youtube_track_filter_rules,
     [
         // Trim whitespaces
         (r"^\s+", ""),
@@ -113,9 +103,9 @@ filter_rules!(
 );
 
 filter_rules!(
-    /// Special filter rules to remove leftovers after filtering text using
-    /// [`YOUTUBE_TRACK_FILTER_RULES`](static.YOUTUBE_TRACK_FILTER_RULES.html) filter rules.
-    TRIM_SYMBOLS_FILTER_RULES,
+    /// Filter rules to remove leftovers after filtering text using
+    /// [`youtube_track_filter_rules`](fn.youtube_track_filter_rules.html).
+    trim_symbols_filter_rules,
     [
         // Leftovers after e.g. (official video)
         (r"\(+\s*\)+", ""),
@@ -128,7 +118,7 @@ filter_rules!(
 
 filter_rules!(
     /// Filter rules to remove "Remastered..."-like strings from a text.
-    REMASTERED_FILTER_RULES,
+    remastered_filter_rules,
     [
         // Here Comes The Sun - Remastered
         (r"-\sRemastered$", ""),
@@ -169,7 +159,7 @@ filter_rules!(
 
 filter_rules!(
     /// Filter rules to remove "Live..."-like strings from a text.
-    LIVE_FILTER_RULES,
+    live_filter_rules,
     [
         // Track - Live
         (r"-\sLive?$", ""),
@@ -180,7 +170,7 @@ filter_rules!(
 
 filter_rules!(
     /// Filter rules to remove "Explicit" and "Clean" from a text.
-    CLEAN_EXPLICIT_FILTER_RULES,
+    clean_explicit_filter_rules,
     [
         // (Explicit) or [Explicit]
         (r"(?i)\s[(\[]Explicit[)\]]", ""),
@@ -191,7 +181,7 @@ filter_rules!(
 
 filter_rules!(
     /// Filter rules to remove feature information from a text.
-    FEATURE_FILTER_RULES,
+    feature_filter_rules,
     [
         // [Feat. Artist] or (Feat. Artist)
         (r"(?i)\s[(\[]feat. .+[)\]]", ""),
@@ -200,7 +190,7 @@ filter_rules!(
 
 filter_rules!(
     /// Filter rules to normalize feature information to "Feat. Artist".
-    NORMALIZE_FEATURE_FILTER_RULES,
+    normalize_feature_filter_rules,
     [
         // [Feat. Artist] or (Feat. Artist) -> Feat. Artist
         (r"(?i)\s[(\[](feat. .+)[)\]]", "$1"),
@@ -210,7 +200,7 @@ filter_rules!(
 filter_rules!(
     /// Filter rules to remove version information (eg. "Album Version" or "Deluxe Edition")
     /// from a text.
-    VERSION_FILTER_RULES,
+    version_filter_rules,
     [
         // Love Will Come To You (Album Version)
         (r"[(\[]Album Version[)\]]$", ""),
@@ -234,7 +224,7 @@ filter_rules!(
 
 filter_rules!(
     /// Filter rules to normalize "- suffix" to "(suffix)" in a text.
-    SUFFIX_FILTER_RULES,
+    suffix_filter_rules,
     [
         // "- X Remix" -> "(X Remix)" and similar
         (
@@ -249,10 +239,9 @@ filter_rules!(
 mod tests {
     use super::*;
 
-    fn test_rules(values: &[(&str, &str)], rules: &FilterRules) {
+    fn test_rules(values: &[(&str, &str)], rules: &[FilterRule]) {
         for value in values {
-            let filtered = rules.apply(value.0.to_string());
-            assert_eq!(filtered, value.1);
+            assert_eq!(apply_rules(value.0, rules), value.1);
         }
     }
 
@@ -308,7 +297,7 @@ mod tests {
             ),
         ];
 
-        test_rules(&titles, &REMASTERED_FILTER_RULES);
+        test_rules(&titles, &remastered_filter_rules());
     }
 
     #[test]
@@ -334,6 +323,6 @@ mod tests {
             ("6 Foot 7 Foot (Explicit Version)", "6 Foot 7 Foot "),
         ];
 
-        test_rules(&titles, &VERSION_FILTER_RULES);
+        test_rules(&titles, &version_filter_rules());
     }
 }
