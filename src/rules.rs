@@ -13,6 +13,7 @@ use std::borrow::Cow;
 use regex::Regex;
 
 /// Represents a regex replacement rule with a pattern and replacement text.
+#[derive(Debug, Clone)]
 pub struct FilterRule(Regex, &'static str);
 
 impl FilterRule {
