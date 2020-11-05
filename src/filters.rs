@@ -18,13 +18,12 @@ fn apply_once(text: String, rules: &[FilterRule]) -> String {
 /// Apply a list of filter rules until the result doesn't change anymore.
 ///
 /// # Example
-///
+/// Generally you will want to combine several filter rules and then apply them to some text:
 /// ```
 /// use metadata_filter::rules::{remastered_filter_rules, trim_whitespace_filter_rules};
 /// use metadata_filter::filters::apply_rules;
 ///
-/// let mut rules = remastered_filter_rules();
-/// rules.extend(trim_whitespace_filter_rules());
+/// let rules = [remastered_filter_rules(), whitespace_filter_rules()].concat();
 /// let filtered = apply_rules("Here Comes The Sun (Remastered)", &rules);
 ///
 /// assert_eq!(filtered, "Here Comes The Sun");
@@ -47,8 +46,7 @@ mod tests {
 
     #[test]
     fn test_multiple_rulesets() {
-        let mut rules = remastered_filter_rules();
-        rules.extend(trim_whitespace_filter_rules());
+        let rules = [remastered_filter_rules(), trim_whitespace_filter_rules()].concat();
         let filtered = apply_rules("Here Comes The Sun (Remastered)", &rules);
 
         assert_eq!(filtered, "Here Comes The Sun");
