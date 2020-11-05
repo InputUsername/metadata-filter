@@ -233,14 +233,10 @@ filter_rules!(
     ]
 );
 
-#[cfg_attr(rustfmt, rustfmt_ignore)]
 filter_rules!(
     /// Filter rules to remove leading and trailing whitespace from a text.
     trim_whitespace_filter_rules,
-    [
-        (r"^\s+", ""),
-        (r"\s+$", ""),
-    ]
+    [(r"^\s+", ""), (r"\s+$", ""),]
 );
 
 #[cfg(test)]
