@@ -6,8 +6,10 @@ edition = "2018"
 license = "MIT"
 repository = "https://github.com/InputUsername/metadata-filter.git"
 homepage = "https://github.com/InputUsername/metadata-filter"
+readme = "README.md"
 description = "Clean up artist, album and song names"
-publish = false
+keywords = ["music", "metadata", "filter", "filtering"]
+publish = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
