@@ -1,4 +1,12 @@
 //! Defines regex replacement rules to filter text with.
+//!
+//! This module defines the FilterRule type, which represents
+//! a regex replacement rule, as well as several functions
+//! that return lists of predefined filter rules.
+//!
+//! Creating a `FilterRule` compiles a [regular expression](https://docs.rs/regex/1/regex/struct.Regex.html),
+//! which means it is potentially expensive to call these predefined
+//! filter rule functions in a loop.
 
 use std::borrow::Cow;
 
