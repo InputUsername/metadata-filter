@@ -434,4 +434,15 @@ mod tests {
 
         test_rules(&titles, &version_filter_rules());
     }
+
+    #[test]
+    fn test_trim_whitespace_filter_rules() {
+        let titles = [
+            ("   Artist - Song Title   ", "Artist - Song Title"),
+            ("   Artist - Song Title", "Artist - Song Title"),
+            ("Artist - Song Title   ", "Artist - Song Title"),
+        ];
+
+        test_rules(&titles, &trim_whitespace_filter_rules());
+    }
 }
