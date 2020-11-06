@@ -193,7 +193,7 @@ filter_rules!(
     normalize_feature_filter_rules,
     [
         // [Feat. Artist] or (Feat. Artist) -> Feat. Artist
-        (r"(?i)\s[(\[](feat. .+)[)\]]", "$1"),
+        (r"(?i)\s[(\[](feat. .+)[)\]]", " $1"),
     ]
 );
 
@@ -397,6 +397,16 @@ mod tests {
         ];
 
         test_rules(&titles, &feature_filter_rules());
+    }
+
+    #[test]
+    fn test_normalize_feature_filter_rules() {
+        let titles = [
+            ("Artist - Song Title (Feat. Other Artist)", "Artist - Song Title Feat. Other Artist"),
+            ("Artist - Song Title [Feat. Other Artist]", "Artist - Song Title Feat. Other Artist"),
+        ];
+
+        test_rules(&titles, &normalize_feature_filter_rules());
     }
 
     #[test]
