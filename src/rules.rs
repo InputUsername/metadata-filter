@@ -108,9 +108,9 @@ filter_rules!(
         // Leftovers after e.g. (official video)
         (r"\(+\s*\)+", ""),
         // trim starting white chars and dash
-        (r#"^[/,:;~-\s"]+"#, ""),
+        (r#"^[/,:;~\-\s"]+"#, ""),
         // trim trailing white chars and dash
-        (r#"[/,:;~-\s"]+$"#, ""),
+        (r#"[/,:;~\-\s"]+$"#, ""),
     ]
 );
 
@@ -297,6 +297,17 @@ mod tests {
         ];
 
         test_rules(&titles, &youtube_track_filter_rules());
+    }
+
+    #[test]
+    fn test_trim_symbols_filter_rules() {
+        let titles = [
+            ("Artist - Song Title ()", "Artist - Song Title"),
+            ("Artist - Song Title - ", "Artist - Song Title"),
+            (" - Artist - Song Title", "Artist - Song Title"),
+        ];
+
+        test_rules(&titles, &trim_symbols_filter_rules());
     }
 
     #[test]
