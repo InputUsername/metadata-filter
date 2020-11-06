@@ -378,6 +378,18 @@ mod tests {
     }
 
     #[test]
+    fn test_clean_explicit_filter_rules() {
+        let titles = [
+            ("Artist - Song Title (Explicit)", "Artist - Song Title"),
+            ("Artist - Song Title [Explicit]", "Artist - Song Title"),
+            ("Artist - Song Title (Clean)", "Artist - Song Title"),
+            ("Artist - Song Title [Clean]", "Artist - Song Title"),
+        ];
+
+        test_rules(&titles, &clean_explicit_filter_rules());
+    }
+
+    #[test]
     fn test_version_filter_rules() {
         let titles = [
             (
