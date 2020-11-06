@@ -163,6 +163,8 @@ filter_rules!(
         (r"-\sLive?$", ""),
         // Track - Live at
         (r"-\sLive\s.+?$", ""),
+        // (Live) or [Live]
+        (r"(?i)[(\[]Live[)\]]", ""),
     ]
 );
 
@@ -350,6 +352,18 @@ mod tests {
         ];
 
         test_rules(&titles, &remastered_filter_rules());
+    }
+
+    #[test]
+    fn test_live_filter_rules() {
+        let titles = [
+            ("Artist - Song Title - Live", "Artist - Song Title "),
+            ("Artist - Song Title - Live at Location", "Artist - Song Title "),
+            ("Artist - Song Title (Live)", "Artist - Song Title "),
+            ("Artist - Song Title [Live]", "Artist - Song Title "),
+        ];
+
+        test_rules(&titles, &live_filter_rules());
     }
 
     #[test]
