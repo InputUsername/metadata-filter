@@ -390,6 +390,16 @@ mod tests {
     }
 
     #[test]
+    fn test_feature_filter_rules() {
+        let titles = [
+            ("Artist - Song Title (Feat. Other Artist)", "Artist - Song Title"),
+            ("Artist - Song Title [Feat. Other Artist]", "Artist - Song Title"),
+        ];
+
+        test_rules(&titles, &feature_filter_rules());
+    }
+
+    #[test]
     fn test_version_filter_rules() {
         let titles = [
             (
