@@ -60,9 +60,9 @@ filter_rules!(
         // (official)? (music)? audio
         (r"(?i)\((of+icial\s*)?(music\s*)?audio\)", ""),
         // (ALBUM TRACK)
-        (r"(?i)(ALBUM TRACK\s*)?(album track\s*)", ""),
+        (r"(?i)(album track\s*)", ""),
         // (Cover Art)
-        (r"(?i)(COVER ART\s*)?(Cover Art\s*)", ""),
+        (r"(?i)(cover art\s*)", ""),
         // (official)
         (r"(?i)\(\s*of+icial\s*\)", ""),
         // (1999)
@@ -88,11 +88,11 @@ filter_rules!(
         // 'Track title'
         (r"^(|.*\s)'(.{5,})'(\s.*|)$", "$2"),
         // (*01/01/1999*)
-        (r"(?i)\(.*[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4}.*\)", ""),
+        (r"(?i)\(.*[0-9]{1,2}/[0-9]{1,2}/[0-9]{2,4}.*\)", ""),
         // Sub Español
         (r"(?i)sub\s*español", ""),
         // (Letra/Lyrics)
-        (r"(?i)\s\(Letra\/Lyrics\)", ""),
+        (r"(?i)\s\(Letra/Lyrics\)", ""),
         // (Letra)
         (r"(?i)\s\(Letra\)", ""),
         // (En vivo)
@@ -256,8 +256,45 @@ mod tests {
 
     fn test_rules(values: &[(&str, &str)], rules: &[FilterRule]) {
         for value in values {
-            assert_eq!(apply_rules(value.0, rules), value.1);
+            let filtered = apply_rules(value.0, rules);
+            println!("value: {:?}\nexpected: {:?}\nactual: {:?}\n-----", value.0, value.1, filtered);
+            assert_eq!(filtered, value.1);
         }
+    }
+
+    #[test]
+    fn test_youtube_track_filter_rules() {
+        let titles = [
+            ("   whitespace prefix", "whitespace prefix"),
+            ("whitespace suffix   ", "whitespace suffix"),
+            ("Artist - Song Title **NEW**", "Artist - Song Title "),
+            ("Artist - Song Title [something]", "Artist - Song Title "),
+            ("Artist - Song Title (xyz version)", "Artist - Song Title "),
+            ("Artist - Song Title.avi", "Artist - Song Title"),
+            ("Artist - Song Title (lyric video)", "Artist - Song Title "),
+            ("Artist - Song Title (official track stream)", "Artist - Song Title "),
+            ("Artist - Song Title (official music video)", "Artist - Song Title "),
+            ("Artist - Song Title (official audio)", "Artist - Song Title "),
+            ("Artist - Song Title (Album Track)", "Artist - Song Title ()"),
+            ("Artist - Song Title (Cover Art)", "Artist - Song Title ()"),
+            ("Artist - Song Title (official)", "Artist - Song Title "),
+            ("Artist - Song Title (1999)", "Artist - Song Title "),
+            ("Artist - Song Title HD", "Artist - Song Title "),
+            ("Artist - Song Title (vidéo clip official)", "Artist - Song Title ()"),
+            ("Artist - Song Title offizielles video", "Artist - Song Title "),
+            ("Artist - Song Title video clip", "Artist - Song Title "),
+            ("Artist - Song Title clip", "Artist - Song Title"),
+            ("Artist - Album Title Full Album", "Artist - Album Title "),
+            ("Artist - Song Title (live)", "Artist - Song Title "),
+            ("Artist - Song Title | something", "Artist - Song Title "),
+            ("Artist - Song Title (01/01/1999)", "Artist - Song Title "),
+            ("Artist - Song Title (sub español)", "Artist - Song Title ()"),
+            ("Artist - Song Title (Letra/Lyrics)", "Artist - Song Title "),
+            ("Artist - Song Title (Letra)", "Artist - Song Title"),
+            ("Artist - Song Title (En vivo)", "Artist - Song Title"),
+        ];
+
+        test_rules(&titles, &youtube_track_filter_rules());
     }
 
     #[test]
