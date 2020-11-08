@@ -436,6 +436,20 @@ mod tests {
     }
 
     #[test]
+    fn test_suffix_filter_rules() {
+        let titles = [
+            ("Song Title - X Remix", "Song Title (X Remix)"),
+            ("Song Title - Y-Z Remix", "Song Title (Y-Z Remix)"),
+            ("Song Title - Y-Z Abc Remix", "Song Title (Y-Z Abc Remix)"),
+            ("Song Title - Abc Xyz Remix", "Song Title (Abc Xyz Remix)"),
+            ("Song Title - Remix", "Song Title (Remix)"),
+            ("Song Title - VIP", "Song Title (VIP)"),
+        ];
+
+        test_rules(&titles, &suffix_filter_rules());
+    }
+
+    #[test]
     fn test_trim_whitespace_filter_rules() {
         let titles = [
             ("   Artist - Song Title   ", "Artist - Song Title"),
