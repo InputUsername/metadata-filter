@@ -368,10 +368,10 @@ mod tests {
     #[test]
     fn test_live_filter_rules() {
         let titles = [
-            ("Artist - Song Title - Live", "Artist - Song Title "),
-            ("Artist - Song Title - Live at Location", "Artist - Song Title "),
-            ("Artist - Song Title (Live)", "Artist - Song Title "),
-            ("Artist - Song Title [Live]", "Artist - Song Title "),
+            ("Song Title - Live", "Song Title "),
+            ("Song Title - Live at Location", "Song Title "),
+            ("Song Title (Live)", "Song Title "),
+            ("Song Title [Live]", "Song Title "),
         ];
 
         test_rules(&titles, &live_filter_rules());
@@ -380,10 +380,10 @@ mod tests {
     #[test]
     fn test_clean_explicit_filter_rules() {
         let titles = [
-            ("Artist - Song Title (Explicit)", "Artist - Song Title"),
-            ("Artist - Song Title [Explicit]", "Artist - Song Title"),
-            ("Artist - Song Title (Clean)", "Artist - Song Title"),
-            ("Artist - Song Title [Clean]", "Artist - Song Title"),
+            ("Song Title (Explicit)", "Song Title"),
+            ("Song Title [Explicit]", "Song Title"),
+            ("Song Title (Clean)", "Song Title"),
+            ("Song Title [Clean]", "Song Title"),
         ];
 
         test_rules(&titles, &clean_explicit_filter_rules());
@@ -392,8 +392,8 @@ mod tests {
     #[test]
     fn test_feature_filter_rules() {
         let titles = [
-            ("Artist - Song Title (Feat. Other Artist)", "Artist - Song Title"),
-            ("Artist - Song Title [Feat. Other Artist]", "Artist - Song Title"),
+            ("Song Title (Feat. Other Artist)", "Song Title"),
+            ("Song Title [Feat. Other Artist]", "Song Title"),
         ];
 
         test_rules(&titles, &feature_filter_rules());
@@ -402,8 +402,8 @@ mod tests {
     #[test]
     fn test_normalize_feature_filter_rules() {
         let titles = [
-            ("Artist - Song Title (Feat. Other Artist)", "Artist - Song Title Feat. Other Artist"),
-            ("Artist - Song Title [Feat. Other Artist]", "Artist - Song Title Feat. Other Artist"),
+            ("Song Title (Feat. Other Artist)", "Song Title Feat. Other Artist"),
+            ("Song Title [Feat. Other Artist]", "Song Title Feat. Other Artist"),
         ];
 
         test_rules(&titles, &normalize_feature_filter_rules());
@@ -452,9 +452,9 @@ mod tests {
     #[test]
     fn test_trim_whitespace_filter_rules() {
         let titles = [
-            ("   Artist - Song Title   ", "Artist - Song Title"),
-            ("   Artist - Song Title", "Artist - Song Title"),
-            ("Artist - Song Title   ", "Artist - Song Title"),
+            ("   Text   ", "Text"),
+            ("   Text", "Text"),
+            ("Text   ", "Text"),
         ];
 
         test_rules(&titles, &trim_whitespace_filter_rules());
