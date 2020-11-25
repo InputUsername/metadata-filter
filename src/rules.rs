@@ -29,7 +29,7 @@ impl FilterRule {
     }
 
     /// Apply the filter rule. Returns Cow::Owned if a replacement was done,
-    /// Cow::Borrowed (referencing the original text) if nothing was changed.
+    /// or Cow::Borrowed (referencing the original text) if nothing was changed.
     pub fn apply<'t>(&self, text: &'t str) -> Cow<'t, str> {
         self.0.replace(text, self.1)
     }
