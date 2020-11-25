@@ -9,6 +9,7 @@
 //! filter rule functions in a loop.
 
 use std::borrow::Cow;
+use std::error::Error;
 
 use regex::Regex;
 
@@ -17,6 +18,16 @@ use regex::Regex;
 pub struct FilterRule(Regex, &'static str);
 
 impl FilterRule {
+    /// Create a new filter rule with a pattern and a replacement text.
+    /// The pattern follows the syntax from the [`regex`](https://docs.rs/regex/1) crate.
+    /// Returns an error if the regex could not be compiled.
+    pub fn new(pattern: &str, replacement: &'static str) -> Result<Self, Box<dyn Error>> {
+        Ok(Self(
+            Regex::new(&pattern)?,
+            replacement
+        ))
+    }
+
     /// Apply the filter rule. Returns Cow::Owned if a replacement was done,
     /// Cow::Borrowed (referencing the original text) if nothing was changed.
     pub fn apply<'t>(&self, text: &'t str) -> Cow<'t, str> {
