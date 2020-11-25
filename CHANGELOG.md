@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.0 (2020-11-25)
+
+- Added more tests
+- Added `FilterRule::new` to create user-defined filter rules
+- Improved documentation
+
 ## v0.1.1 (2020-11-07)
 
 - Added more tests
