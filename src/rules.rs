@@ -15,23 +15,23 @@ use regex::Regex;
 
 /// Represents a regex replacement rule with a pattern and replacement text.
 #[derive(Debug, Clone)]
-pub struct FilterRule(Regex, &'static str);
+pub struct FilterRule(Regex, String);
 
 impl FilterRule {
     /// Create a new filter rule with a pattern and a replacement text.
     /// The pattern follows the syntax from the [`regex`](https://docs.rs/regex/1) crate.
     /// Returns an error if the regex could not be compiled.
-    pub fn new(pattern: &str, replacement: &'static str) -> Result<Self, Box<dyn Error>> {
+    pub fn new(pattern: &str, replacement: &str) -> Result<Self, Box<dyn Error>> {
         Ok(Self(
             Regex::new(&pattern)?,
-            replacement
+            replacement.to_string(),
         ))
     }
 
     /// Apply the filter rule. Returns Cow::Owned if a replacement was done,
     /// or Cow::Borrowed (referencing the original text) if nothing was changed.
     pub fn apply<'t>(&self, text: &'t str) -> Cow<'t, str> {
-        self.0.replace(text, self.1)
+        self.0.replace(text, &self.1[..])
     }
 }
 
@@ -41,7 +41,7 @@ macro_rules! filter_rules {
         pub fn $name() -> Vec<FilterRule> {
             $rules
                 .iter()
-                .map(|rule| FilterRule(Regex::new(rule.0).unwrap(), rule.1))
+                .map(|rule| FilterRule::new(rule.0, rule.1).unwrap())
                 .collect()
         }
     };
