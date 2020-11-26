@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.0 (2020-11-26)
+
+- Removed `'static` lifetime from the `FilterRule::new` replacement text,
+  allowing dynamic creation of filter rules
+- Added a link to `apply_rules` in the documentation
+
 ## v0.2.0 (2020-11-25)
 
 - Added more tests
