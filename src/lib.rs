@@ -3,7 +3,8 @@
 //! TypeScript library.
 //!
 //! Currently, this library is mostly a collection of predefined filtering rules
-//! along with the `apply_rules` function which can apply a list of rules to a text.
+//! along with the [`apply_rules`](crate::filters::apply_rules) function which can
+//! apply a list of rules to a text.
 //!
 //! See the [`rules`](crate::rules) module for the lists of available filter rules.
 //!
